@@ -4,8 +4,10 @@ particular to cl-prevalence.
 Clobber is both simpler, more flexible, and more robust than systems
 based on object prevalence.  
 
-It is simpler because we do not take any snapshots at all.  Instead,
-the transaction log is always read into an empty system.
+It is simpler because we do not take any snapshots at all.  Other
+systems typically use a combination of transaction logs and snapshots.
+Clobber uses only a transaction log which is always read into an empty
+system.
 
 It is more flexible because the system itself does not define the
 format of a transaction.  Client code can save transactions as Lisp
