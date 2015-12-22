@@ -1,6 +1,6 @@
-(cl:in-package #:common-lisp-user)
+(cl:in-package #:asdf-user)
 
-(asdf:defsystem :clobber
+(defsystem :clobber
   :components
   ((:file "packages")
    (:file "clobber" :depends-on ("packages"))
