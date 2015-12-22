@@ -215,4 +215,3 @@
   (serialize transaction transaction-log)
   (terpri (log-stream transaction-log))
   (finish-output (log-stream transaction-log)))
-
