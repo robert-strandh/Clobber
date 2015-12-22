@@ -1,8 +1,9 @@
 (cl:in-package #:asdf-user)
 
 (defsystem :clobber
+  :serial t
   :components
   ((:file "packages")
-   (:file "clobber" :depends-on ("packages"))
-   (:file "demo" :depends-on ("clobber"))
-   (:file "demo2" :depends-on ("clobber"))))
+   (:file "clobber")
+   (:file "demo")
+   (:file "demo2")))
