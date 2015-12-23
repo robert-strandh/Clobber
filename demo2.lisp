@@ -146,8 +146,3 @@
       (execute 'deposit 300 a3)
       (execute 'withdraw 10 a3)
       (execute 'transfer 20 a2 a1))))
-
-
-
-
-
