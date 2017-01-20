@@ -68,13 +68,14 @@
       transaction-log
     (let ((id (gethash object object-id-table)))
       (if (null id)
-          (setf id (incf next-object-id))
-          (setf (gethash object object-id-table) id)
-          (format log-stream "#~d!(" id)
-          (serialize (car object) transaction-log)
-          (format log-stream " . ")
-          (serialize (cdr object) transaction-log)
-          (format log-stream ")")
+          (progn
+            (setf id (incf next-object-id))
+            (setf (gethash object object-id-table) id)
+            (format log-stream "#~d!(" id)
+            (serialize (car object) transaction-log)
+            (format log-stream " . ")
+            (serialize (cdr object) transaction-log)
+            (format log-stream ")"))
           (format log-stream "#~d^" id)))))
 
 ;;; FIXME: add serialization of arbitrary arrays.
