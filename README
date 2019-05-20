@@ -24,7 +24,7 @@ It is more robust because serialization of instances of (subclasses
 of) standard-object is not accomplished based on slots.  Slots are
 considered implementation details.  In traditional systems, whenever
 the model evolves, the serialization might no longer be valid.  In
-contrast, Clobber serialized instances of standard-object as a list of
+contrast, Clobber serializes instances of standard-object as a list of
 pairs, each one consisting of an initarg and a value.  These pairs can
 be handled by client code in any way it sees fit.  They can be handled
 by an :initarg, by initialize-instance, or they can be ignored.  The
