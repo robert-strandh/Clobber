@@ -1,3 +1,4 @@
+# Clobber
 Clobber is an alternative to so called "object prevalence", and in
 particular to cl-prevalence.
 
@@ -21,13 +22,13 @@ can use the model objects themselves such as people, accounts,
 automobiles and whatnot.
 
 It is more robust because serialization of instances of (subclasses
-of) standard-object is not accomplished based on slots.  Slots are
+of) `standard-object` is not accomplished based on slots.  Slots are
 considered implementation details.  In traditional systems, whenever
 the model evolves, the serialization might no longer be valid.  In
-contrast, Clobber serializes instances of standard-object as a list of
+contrast, Clobber serializes instances of `standard-object` as a list of
 pairs, each one consisting of an initarg and a value.  These pairs can
 be handled by client code in any way it sees fit.  They can be handled
-by an :initarg, by initialize-instance, or they can be ignored.  The
+by an `:initarg`, by `initialize-instance`, or they can be ignored.  The
 downside of the Clobber method is that client code must specify these
 pairs in the form of an initarg and the name of an accessor function
 to be called to obtain the value used for the initarg.  This
@@ -37,7 +38,7 @@ in the model classes.
 
 At the heart of Clobber is a mechanism for serializing objects that
 preserves object identity, much like the reader macros #= and ##,
-except that clobber detects sharing within the entire transaction log,
+except that Clobber detects sharing within the entire transaction log,
 not only within a single transaction.  This mechanism is what makes it
 possible for client code to put any old object in a transaction, while
 making sure that sharing is preserved.
