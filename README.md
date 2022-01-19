@@ -50,3 +50,11 @@ whatever he or she pleases with the code.
 Send comments to robert.strandh@gmail.com
 
 A manual might be written one day. 
+
+# Running the demo
+```lisp
+(ql:quickload :clobber)
+(in-package :clobber-demo)
+(start "/path/to/new/file")
+(do-things-1)
+```
