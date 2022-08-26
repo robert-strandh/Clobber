@@ -6,13 +6,13 @@ Clobber is both simpler, more flexible, and more robust than systems
 based on object prevalence.
 
 ** Simplicity
-It is simpler because we do not take any snapshots at all.  Other
+Clobber is simpler because we do not take any snapshots at all.  Other
 systems typically use a combination of transaction logs and snapshots.
 Clobber uses only a transaction log which is always read into an empty
 system.
 
 ** Flexibility
-It is more flexible because the system itself does not define the
+Clobber is more flexible because the system itself does not define the
 format of a transaction.  Client code can save transactions as Lisp
 lists, as instances of standard-object, or anything else that can be
 serialized.  It is also more flexible because transactions can contain
@@ -24,9 +24,9 @@ can use the model objects themselves such as people, accounts,
 automobiles and whatnot.
 
 ** Robustness
-It is more robust because serialization of instances of (subclasses
-of) =standard-object= is not accomplished based on slots.  Slots are
-considered implementation details.  In other object prevalence systems, whenever
+Clobber is more robust because serialization of instances of (subclasses
+of) =standard-object= is not accomplished based on slots.  Clobber considers slots to be
+implementation details.  In other object prevalence systems, whenever
 the model evolves, the serialization might no longer be valid.  In
 contrast, Clobber serializes instances of =standard-object= as a list of
 pairs, each one consisting of an initarg and a value.  These pairs can
