@@ -8,5 +8,6 @@
   :components
   ((:file "packages")
    (:file "clobber")
+   (:file "docstrings")
    (:file "demo")
    (:file "demo2")))
