@@ -76,7 +76,7 @@ A manual might be written one day.
 
 2. Determine the data structure your application will use to represent each transaction, and how the application will restore state from each transaction.
 
-   e.g. a transaction could be a list whose =car= is a function and whose =cdr= are arguments to the function. State can be restored from such a transaction through =(lambda (txn) (apply (first txn) (rest txn)))=
+   e.g. a transaction could be a list whose =car= is a function and whose =cdr= is a list of arguments to the function. State can be restored from such a transaction through =(lambda (txn) (apply (first txn) (rest txn)))=
 
 3. Use =clobber:open-transaction-log= to create a transaction log, usually stored in a special variable.
 
