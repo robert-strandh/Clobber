@@ -81,7 +81,7 @@ A manual might be written one day.
 4. Close the transaction log using =clobber:close-transaction-log=.
 
 * Reference
-1. =define-save-info (type &body save-info)=
-2. =open-transaction-log (filename function)=
-3. =log-transaction (transaction transaction-log)=
-4. =close-transaction-log (transaction-log)=
+** =define-save-info (type &body save-info)=                         :macro:
+** =open-transaction-log (filename function)=                     :function:
+** =log-transaction (transaction transaction-log)=                :function:
+** =close-transaction-log (transaction-log)=                      :function:
