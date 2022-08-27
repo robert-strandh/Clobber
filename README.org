@@ -78,14 +78,22 @@ A manual might be written one day.
 
    e.g. a transaction could be a list whose =car= is a function and whose =cdr= is a list of arguments to the function. State can be restored from such a transaction through =(lambda (txn) (apply (first txn) (rest txn)))=
 
-3. Use =clobber:open-transaction-log= to create a transaction log, usually stored in a special variable.
+3. When you update your application state -
+   1. Use =clobber:with-transaction-log= to create a transaction log.
 
-4. Call =clobber:log-transaction= whenever you update your application state. You may wish to define a helper function or macro for this.
+   2. Within the body of =clobber:with-transaction-log=, use =clobber:log-transaction= to persist the changes to your application state. You may wish to define a helper function or macro for this.
 
-5. Close the transaction log using =clobber:close-transaction-log=.
+If =clobber:with-transaction-log= is for some reason unsuitable -
+
+1. Use =clobber:open-transaction-log= to create a transaction log, usually stored in a special variable.
+
+2. Use =clobber:log-transaction= to persist changes to your application state.
+
+3. When the transaction log is no longer required, close it using =clobber:close-transaction-log=.
 
 * Reference
 *** =define-save-info (type &body save-info)=                       :macro:
+*** =with-transaction-log ((var file function) &body forms)=        :macro:
 *** =open-transaction-log (filename function)=                   :function:
 *** =log-transaction (transaction transaction-log)=              :function:
 *** =close-transaction-log (transaction-log)=                    :function:
