@@ -24,3 +24,9 @@ Each form in SAVE-INFO should be a list of two elements -
 (INITARG ACCESSOR)
 
 where INITARG and ACCESSOR should correspond to a slot for TYPE.")
+
+(setf
+ (documentation 'with-transaction-log 'function)
+ "Load transaction log from PATH using FUNCTION, execute FORMS, and close the log.
+
+VAR is bound to an instance of `transaction-log'.")

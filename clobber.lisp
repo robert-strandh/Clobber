@@ -273,3 +273,8 @@
   (serialize transaction transaction-log)
   (terpri (log-stream transaction-log))
   (finish-output (log-stream transaction-log)))
+
+(defmacro with-transaction-log ((var file function) &body forms)
+  `(let ((,var (open-transaction-log ,file ,function)))
+     (unwind-protect (progn ,@forms)
+       (close-transaction-log ,var))))

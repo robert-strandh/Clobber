@@ -6,4 +6,5 @@
    #:define-save-info
    #:open-transaction-log
    #:close-transaction-log
-   #:log-transaction))
+   #:log-transaction
+   #:with-transaction-log))
