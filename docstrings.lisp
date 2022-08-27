@@ -16,7 +16,7 @@ FUNCTION should accept a single argument, a transaction object.
 OBJECT-TABLE should be a hash table.")
 
 (setf
- (documentation #'define-save-info 'function)
+ (documentation 'define-save-info 'function)
  "Define SAVE-INFO as data to serialize for instances of TYPE.
 
 Each form in SAVE-INFO should be a list of two elements -
