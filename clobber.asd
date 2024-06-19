@@ -4,10 +4,9 @@
   :description "Library for transaction-oriented data bases."
   :author "Robert Strandh <robert.strandh@gmail.com>"
   :license "FreeBSD, see file LICENSE.text"
+  :depends-on (#:clobber-base)
   :serial t
   :components
-  ((:file "packages")
-   (:file "clobber")
-   (:file "docstrings")
-   (:file "demo")
-   (:file "demo2")))
+  ((:file "Documentation/demo")
+   (:file "Documentation/demo2"))
+  :in-order-to ((test-op (test-op "clobber-test"))))

@@ -1,4 +1,4 @@
-(cl:in-package #:clobber)
+(cl:in-package #:clobber-internal)
 
 (setf
  (documentation #'open-transaction-log 'function)

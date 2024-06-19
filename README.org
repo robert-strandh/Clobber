@@ -1,3 +1,4 @@
+
 * Explanation
 Clobber is an alternative to so-called "object prevalence", and in
 particular to [[https://cl-prevalence.common-lisp.dev/][cl-prevalence]].
@@ -48,16 +49,21 @@ possible for client code to put any old object in a transaction, while
 making sure that sharing is preserved.
 
 ** Examples
-Two examples are included - see files [[file:demo.lisp][demo.lisp]] and [[file:demo2.lisp][demo2.lisp]]
+Two examples are included - see files [[file:Documentation/demo.lisp][demo.lisp]] and [[file:Documentation/demo2.lisp][demo2.lisp]]
 
 To run =demo.lisp= -
 
 #+BEGIN_SRC lisp
-(ql:quickload :clobber)
-(in-package :clobber-demo)
-(start "/path/to/new/file")
-(do-things-1)
-;; inspect the file to see the transaction log
+  (ql:quickload :clobber)
+  (in-package :clobber-demo)
+  (defvar *database-file* (merge-pathnames "my-database" (USER-HOMEDIR-PATHNAME)))
+  (start *database-file*)
+  (do-things-1)
+  ;;; inspect the file to see the transaction log
+  (with-open-file (stream *database-file*)
+    (let ((data (make-string (file-length stream))))
+      (read-sequence data stream)
+      data))
 #+END_SRC
 
 ** License
@@ -72,7 +78,7 @@ Send comments to robert.strandh@gmail.com
 A manual might be written one day.
 
 * How to use Clobber
-1. If your application objects are instances of (subclasses of) =standard-object=, use =clobber:define-save-info= to tell Clobber how to serialize them.
+1. If your application objects are instances of (subclasses of) =standard-object=, use =clobber:define-save-info= to tell Clobber how to serialize themr.
 
 2. Determine the data structure your application will use to represent each transaction, and how the application will restore state from each transaction.
 
@@ -97,3 +103,4 @@ If =clobber:with-transaction-log= is for some reason unsuitable -
 *** =open-transaction-log (filename function)=                   :function:
 *** =log-transaction (transaction transaction-log)=              :function:
 *** =close-transaction-log (transaction-log)=                    :function:
+*** =transaction-log-open-p (transaction-log)=                   :function:
