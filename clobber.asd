@@ -7,6 +7,9 @@
   :depends-on (#:clobber-base)
   :serial t
   :components
-  ((:file "Documentation/demo")
-   (:file "Documentation/demo2"))
+  ((:module "Documentation/demo"
+    :components ((:file "common")
+		 (:file "demo1")
+		 (:file "demo2")
+		 (:file "demo3"))))
   :in-order-to ((test-op (test-op "clobber-test"))))
