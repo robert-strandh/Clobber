@@ -33,7 +33,7 @@
           (format log-stream "#~d^" id)))))
 
 (defmacro with-serialize-common ((object transaction-log id log-stream) &body body)
-  `(serialize-common object transaction-log
+  `(serialize-common ,object transaction-log
     (lambda (,object ,id ,log-stream ,transaction-log)
       (declare (ignorable ,id ,log-stream ,transaction-log))
       ,@body)))
@@ -42,6 +42,17 @@
   `(defmethod serialize ((,object ,class) ,transaction-log)
      (with-serialize-common (,object ,transaction-log ,id ,log-stream)
        ,@body)))
+
+(defmacro with-string-transaction-log (symbol &body body)
+  (let ((output-stream (gensym "OUTPUT-STREAM")))
+    `(with-output-to-string (,output-stream)
+       (let ((,symbol (make-transaction-log ,output-stream (make-hash-table))))
+	 ,@body))))
+
+(defun serialize-to-string (object)
+  (with-string-transaction-log transaction-log    
+    (serialize object transaction-log)
+    (commit transaction-log)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -57,12 +68,34 @@
     (%set-syntax-hash-bang object-table)
     (%set-syntax-hash-caret object-table)))
 
+(defun make-a-hash-table (&key (test #'eql) elements
+			    size rehash-size rehash-threshold)
+  (let ((hash-table (apply #'make-hash-table
+			   :test test
+			   (append
+			    (unless (null size)
+			      (list :size size))
+			    (unless (null rehash-size)
+			      (list :rehash-size rehash-size))
+			    (unless (null rehash-threshold)
+			      (list :rehash-threshold rehash-threshold))))))
+    (loop :for (key . value) :in elements
+          :do (setf (gethash key hash-table) value))
+    hash-table))
+
+;;; specification==(object-type :initarg1 initval1 :initarg2 initval2 ...)
+(defun fn-and-args (specification)
+  (case (car specification) 
+    ('hash-table (values #'make-a-hash-table (cdr specification)))
+    (otherwise (values #'make-instance specification))))
+
 (defun %set-syntax-left-bracket ()
   (set-macro-character
    #\[
    (lambda (stream char)
      (declare (ignore char))
-     (apply #'make-instance (read-delimited-list #\] stream t)))))
+     (multiple-value-bind (fn args) (fn-and-args (read-delimited-list #\] stream t))
+       (apply fn args)))))
 
 (defun %set-syntax-right-bracket ()
   (set-syntax-from-char #\] #\)))
