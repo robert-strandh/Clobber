@@ -36,7 +36,7 @@
   (multiple-value-bind (object-id-table max-object-id)
       (make-object-id-table object-table)
     (make-instance 'transaction-log
-                   :log-stream output-stream
+                   :final-log-stream output-stream
                    :object-id-table object-id-table
                    :next-object-id (1+ max-object-id))))
 

@@ -13,21 +13,25 @@
 
 (defclass transaction-log ()
   (;; A stream to which transactions are logged.
-   (%log-streami
-    :initarg :log-stream
-    :reader log-stream)
+   (%log-streami :initarg :final-log-stream :reader final-log-stream)
+   ;; Sometimes after a transaction is logged (it has to be logged
+   ;; before it is executed because it may change the objects
+   ;; the transaction is meant to work with, and the objects
+   ;; are also logged), the programmer discovers that it had a typo.
+   ;; Now he has to mess with the file the transaction was logged into,
+   ;; correct the typo or delete the transaction.
+   ;; To avoid that, we log the transaction into a temporary string
+   ;; which is commited to the log-stream only after it is succesfully executed.
+   (%temporary-log-stream :initform (make-string-output-stream)
+			  :reader log-stream)
    ;; A table mapping objects to identities.  Whenever we serialize an
    ;; object that has not been serialized before, it is entered into
    ;; the table, and the output is marked with the identity.  Whenever
    ;; we serialize an object that has been serialized before, we just
    ;; print the identity.
-   (%object-id-table
-    :initarg :object-id-table
-    :reader object-id-table)
+   (%object-id-table :initarg :object-id-table :reader object-id-table)
    ;; We allocate object identities sequentially.
-   (%next-object-id
-    :initarg :next-object-id
-    :accessor next-object-id)))
+   (%next-object-id :initarg :next-object-id :accessor next-object-id)))
 
 ;;; Serialization of instances of STANDARD-OBJECT.
 
@@ -45,7 +49,12 @@
 ;;; utilizes the object-table modified in effect of the first function
 ;;; to create a transaction log object which can be used to log further
 ;;; transactions.
-;;; INPUT-AND-OUTPUT can be a pair of streams or a single pathname
+;;; INPUT-AND-OUTPUT can be a pair (input-stream . output-stream)
+;;; clobber will read and execute all the transactions from input-stream
+;;; then write to output-stream the further transactions executed by the user
+;;; or it can be a single pathname
+;;; from which it reads and executes all the transactions
+;;; then writes to the same file the further transactions executed by the user
 
 (defgeneric open-transaction-log (input-and-output function))
 
@@ -71,6 +80,26 @@
   (serialize transaction transaction-log)
   (terpri (log-stream transaction-log))
   (finish-output (log-stream transaction-log)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Commit (write to final-log-stream) the transactions from
+;;; the the temporary string
+;;;
+
+(defun commit (transaction-log)
+  (let ((final-log-stream (final-log-stream transaction-log)))
+    (princ (get-output-stream-string (log-stream transaction-log))
+	   final-log-stream)
+    (finish-output final-log-stream)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; Get rid of the uncommitted transactions from the temporary string
+;;;
+
+(defun clear-uncommitted (transaction-log)
+  (get-output-stream-string (log-stream transaction-log)))
 
 (defmacro with-transaction-log ((var file-or-streams-pair function) &body forms)
   `(let ((,var (open-transaction-log ,file-or-streams-pair ,function)))

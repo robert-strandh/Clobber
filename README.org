@@ -49,21 +49,45 @@ possible for client code to put any old object in a transaction, while
 making sure that sharing is preserved.
 
 ** Examples
-Two examples are included - see files [[file:Documentation/demo.lisp][demo.lisp]] and [[file:Documentation/demo2.lisp][demo2.lisp]]
+Two examples are included - see files [[file:Documentation/demo1.lisp][demo1.lisp]], [[file:Documentation/demo2.lisp][demo2.lisp]] and [[file:Documentation/demo3.lisp][demo3.lisp]]
 
-To run =demo.lisp= -
+To run the demos -
 
 #+BEGIN_SRC lisp
   (ql:quickload :clobber)
-  (in-package :clobber-demo)
-  (defvar *database-file* (merge-pathnames "my-database" (USER-HOMEDIR-PATHNAME)))
-  (start *database-file*)
-  (do-things-1)
-  ;;; inspect the file to see the transaction log
-  (with-open-file (stream *database-file*)
-    (let ((data (make-string (file-length stream))))
-      (read-sequence data stream)
-      data))
+  (in-package :clobber-demo/demo1)
+  #+(or)(in-package :clobber-demo/demo2)
+  #+(or)(in-package :clobber-demo/demo3)
+
+  (delete-database) ; clean up
+  (do-and-see)      ; see what the database file contains after the execution of transactions
+#| sample output:
+"#2!(NEW-BANK . #3!(#4![BANK] . NIL))
+#5!(NEW-BANK . #6!(#7![BANK] . NIL))
+#8!(ADD-CUSTOMER . #9!(#10![PERSON :NAME #11!\"Jane\"] . #12!(#4^ . NIL)))
+#13!(ADD-CUSTOMER . #14!(#10^ . #15!(#7^ . NIL)))
+#16!(ADD-CUSTOMER . #17!(#18![PERSON :NAME #19!\"Bill\"] . #20!(#4^ . NIL)))
+#21!(ADD-ACCOUNT . #22!(#23![ACCOUNT :HOLDER #10^] . #24!(#4^ . NIL)))
+#25!(ADD-ACCOUNT . #26!(#27![ACCOUNT :HOLDER #10^] . #28!(#7^ . NIL)))
+#29!(ADD-ACCOUNT . #30!(#31![ACCOUNT :HOLDER #18^] . #32!(#4^ . NIL)))
+#33!(DEPOSIT . #34!(100 . #35!(#23^ . NIL)))
+#36!(DEPOSIT . #37!(200 . #38!(#27^ . NIL)))
+#39!(DEPOSIT . #40!(300 . #41!(#31^ . NIL)))
+#42!(WITHDRAW . #43!(10 . #44!(#31^ . NIL)))
+#45!(TRANSFER . #46!(20 . #47!(#27^ . #48!(#23^ . NIL))))
+"
+|#
+  ;; (reload-database-and-see) ; see that *banks* has the data freshly revived from the database file. 
+#| sample output:
+((:BANK-ID 45 :ACCOUNTS
+  ((:ACCOUNT-ID 52 :PARENT-BANK-ID 45 :BALANCE 180 :HOLDER <Jane>)) :CUSTOMERS
+  (<Jane>))
+ (:BANK-ID 65 :ACCOUNTS
+  ((:ACCOUNT-ID 73 :PARENT-BANK-ID 65 :BALANCE 300 :HOLDER <Bill>)
+   (:ACCOUNT-ID 89 :PARENT-BANK-ID 65 :BALANCE 120 :HOLDER <Jane>))
+  :CUSTOMERS (<Bill> <Jane>)))
+|#
+
 #+END_SRC
 
 ** License
