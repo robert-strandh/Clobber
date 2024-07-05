@@ -1,5 +1,5 @@
 (defsystem #:clobber-base
-  :depends-on ()
+  :depends-on (#:closer-mop)
   :serial t
   :components
   ((:file "packages")
